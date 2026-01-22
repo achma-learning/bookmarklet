@@ -36,6 +36,7 @@
             background-color: #222;
             color: #ccc;
             font-size: 1em;
+            box-sizing: border-box;
         }
         #bookmarkletsContainer {
             display: grid;
@@ -67,7 +68,7 @@
             border: 1px solid #555; 
             border-radius: 3px 0 0 3px; 
             padding: 8px; 
-            font-family: 'monospace'; 
+            font-family: monospace; 
             font-size: 0.9em; 
             background: #222; 
             color: #ccc;
@@ -84,6 +85,9 @@
         }
         .copy-button:hover {
             background-color: #137ab3;
+        }
+        .copy-button.copied {
+            background-color: #27ae60;
         }
         .drag-container {
             position: relative;
@@ -135,39 +139,63 @@
 <body>
 
 <div class="container">
-    <h1>Bookmarklets</h1>
-    <input type="text" id="searchInput" onkeyup="searchBookmarklets()" placeholder="Search for bookmarklets..">
+    <h1>Bookmarklets Collection</h1>
+    <input type="text" id="searchInput" placeholder="Search for bookmarklets...">
     <div id="bookmarkletsContainer"></div>
     <div id="noResultsMessage" style="display: none;">No bookmarklets found.</div>
 </div>
 
 <script>
+// === DATA ===
 const bookmarkletsData = [
-    {"name": "Tip", "description": "Shows a popup with various tips for using browsers and bookmarklets.", "code": "javascript:(function(){const d=document.createElement('div');d.style.cssText='position:fixed;top:2vh;right:2vw;max-width:max(420px,min(98vw,980px));max-height:85vh;overflow-y:auto;padding:clamp(14px,2vw,22px) clamp(20px,3vw,32px);background:rgba(8,8,18,0.97);color:#f5f5fc;box-shadow:0%2016px%2064px%20rgba(0,0,0,0.75);border-radius:18px;font:400%20clamp(13px,0.95vw,14.5px)/1.5%20system-ui,-apple-system,BlinkMacSystemFont,sans-serif;z-index:99999999;pointer-events:auto;user-select:text;border:1px%20solid%20#35355c;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);opacity:0;transform:translateY(-20px);transition:all%20.5s%20ease-out';d.innerHTML=%60%3Cdiv%20style=%22position:relative;%22%3E%3Cbutton%20id=%22closeBtn%22%20style=%22position:absolute;top:0;right:0;background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;padding:8px%2012px;line-height:1;%22%3E%E2%9C%95%3C/button%3E%3Cdiv%20style=%22font-weight:700;font-size:clamp(16px,1.3vw,18px);margin-bottom:12px;color:#60a8ff;letter-spacing:-0.3px;padding-right:36px;%22%3E%F0%9F%9A%80%20Browser%20&%20Bookmarklet%20Tips%20(2026)%3C/div%3E%3C/div%3E%3Clabel%20style=%22display:flex;align-items:center;gap:10px;font-size:clamp(12.5px,0.9vw,13.5px);color:#e0e0f5;cursor:pointer;user-select:none;margin-bottom:12px;%22%3E%3Cinput%20type=%22checkbox%22%20id=%22keep%22%20style=%22margin:0;transform:scale(1.2);%22%3EKeep%20open%3C/label%3E%3Cstrong%3E%E2%91%A0%20Focus%20Address%20bar:%3C/strong%3E%3Cbr%3E%E2%80%A2%20Ctrl+L%20(universal)%20|%20Cmd+L%20(macOS)%3Cbr%3E%E2%80%A2%20Alt+D%20(Windows/Edge)%20|%20F6%20/%20Fn+F6%20(cycle)%3Cbr%3E%E2%80%A2%20Why?%20%E2%86%92%20to%20search%20for%20bookmarklet%20inside%20current%20tab%3Cbr%3E%3Cbr%3E%3Cstrong%3E%E2%91%A1%20Search%20bookmarks%20(inside%20current%20tab),%20type%20in%20Address%20bar:%3C/strong%3E%3Cbr%3E%E2%80%A2%20%3Cstrong%3E@b+[Tab]%3C/strong%3E%20(quick)%20or%20%3Cstrong%3E@bookmarks%3C/strong%3E%20-%20(Chrome)%3Cbr%3E%E2%80%A2%20%3Cstrong%3E*%3C/strong%3E%20-%20(Firefox)%3C/div%3E%60;document.body.appendChild(d);let%20seconds=18;const%20timerEl=d.querySelector('#timer');const%20updateTimer=()=%3E{if(seconds%3E0){seconds--;timerEl.textContent=%60Auto-hide%20in%20${seconds}s%20%E2%80%A2%20Esc%20to%20close%60}};let%20tId=setInterval(()=%3E{updateTimer();if(seconds%3C=0){clearInterval(tId);d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=%3Ed.remove(),700)}},1000);updateTimer();setTimeout(()=%3E{d.style.opacity='1';d.style.transform='translateY(0)'},80);d.querySelector('#closeBtn').onclick=()=%3E{d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=%3Ed.remove(),700)};const%20c=d.querySelector('#keep');if(c){c.addEventListener('change',()=%3E{if(c.checked){clearInterval(tId);timerEl.textContent='Auto-hide%20paused%20%E2%80%A2%20Esc%20or%20close%20button'}else{seconds=18;updateTimer();tId=setInterval(()=%3E{updateTimer();if(seconds%3C=0){clearInterval(tId);d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=%3Ed.remove(),700)}},1000)}})}document.addEventListener('keydown',e=%3E{if(e.key==='Escape'&&!e.repeat){d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=%3Ed.remove(),700)}},{once:true})})();"},
-    {"name": "Must Have Bookmarklets", "description": "A collection of must-have bookmarklets.", "code": "https://the-best-codes.github.io/tools/bookmarks/"},
-    {"name": "Translate UN Languages", "description": "Translates the current page into one of the 6 official UN languages.", "code": "javascript:(function(){const d=document.createElement('div');const langs={ar:'Arabic',zh:'Chinese',en:'English',fr:'French',ru:'Russian',es:'Spanish'};/*...code...*/})();"},
-    {"name": "Translate AIO", "description": "All-in-one translation bookmarklet with a wide range of languages.", "code": "javascript:(function(){const d=document.createElement('div');const langs={en:'English',fr:'Fran%C3%A7ais',ar:'%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9',es:'Espa%C3%B1ol',de:'Deutsch',it:'Italiano',pt:'Portugu%C3%AAs',ru:'%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9',zh:'%E4%B8%AD%E6%96%87',ja:'%E6%97%A5%E6%9C%AC%E8%AA%9E',ko:'%ED%95%9C%EA%B5%AD%EC%96%B4',hi:'%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80',tr:'T%C3%BCrk%C3%A7e',nl:'Nederlands',pl:'Polski',sv:'Svenska',vi:'Ti%E1%BA%BFng Vi%E1%BB%87t',th:'%E0%B9%84%E0%B8%97%E0%B8%A2',id:'Bahasa Indonesia',uk:'%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%B0',ro:'Rom%C3%A2n%C4%83',cs:'%C4%8Ce%C5%A1tina',el:'%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%AC',he:'%D7%A2%D7%91%D7%A8%D7%99%D7%AA',fa:'%D9%81%D8%A7%D8%B1%D8%B3%DB%8C',bn:'%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE',ur:'%D8%A7%D8%B1%D8%AF%D9%88',ms:'Bahasa Melayu'};/*...code...*/})();"},
-    {"name": "Instagram Downloader", "description": "Download videos and images from Instagram.", "code": "javascript:(function(){let url=window.location.href;if(!url.includes('instagram.com')){alert('%E2%9A%A0%EF%B8%8F Please use this bookmarklet on Instagram!');return}/*...code...*/})();"},
-    {"name": "Facebook Downloader", "description": "Download videos from Facebook.", "code": "javascript:(function(){let url=window.location.href;if(!url.includes('facebook.com')){alert('%E2%9A%A0%EF%B8%8F Please use this on Facebook!');return}/*...code...*/})();"},
-    {"name": "YouTube Downloader", "description": "Provides a list of services to download YouTube videos.", "code": "javascript:(function(){const url=location.href;if(!url.includes('youtube.com/watch')){alert('Open a YouTube video page first!');return;}/*...code...*/})();"},
-    {"name": "Interactive QR Code", "description": "Generates an interactive QR code for the current page URL.", "code": "javascript:(function(){const d=document.createElement('div');let size='1000x1000';/*...code...*/})();"},
-    {"name": "Search Web Archive", "description": "Search for the current URL in the Wayback Machine.", "code": "javascript:(function(){window.location='http://web.archive.org/web/*/'+document.URL})()"},
-    {"name": "Save to Web Archive", "description": "Save the current page to the Wayback Machine.", "code": "javascript:(function(){window.open('https://web.archive.org/save/'+document.URL,'_blank')})();"},
-    {"name": "Clear All Storage", "description": "Clears local storage, session storage, cookies, cache, and IndexedDB.", "code": "javascript:(function(){try{localStorage.clear();sessionStorage.clear();document.cookie.split(';').forEach(c=>document.cookie=c.split('=')[0]+'=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/');if('caches'in window)caches.keys().then(k=>k.forEach(n=>caches.delete(n)));if('indexedDB'in window)indexedDB.databases().then(dbs=>dbs.forEach(db=>indexedDB.deleteDatabase(db.name)));alert('%E2%9C%93 All storage cleared!')}catch(e){alert('Error: '+e.message)}})();"},
-    {"name": "Color Picker", "description": "An advanced color picker tool with multiple features.", "code": "javascript:(function(){'use strict';if(!window.EyeDropper){alert('Your browser does not support the EyeDropper API...');return}/*...code...*/})();"},
-    {"name": "Dark Mode", "description": "Applies a simple dark mode to the current page.", "code": "javascript:(function(){var s=document.getElementById('bookmarklet-dark-mode');if(s){s.remove();return;}s=document.createElement('style');s.id='bookmarklet-dark-mode';s.innerHTML='html,body,div,section,article,header,footer,main,nav,aside,span,p,h1,h2,h3,h4,h5,h6,li,ul,ol,table,tr,td,th,button,input,textarea,select{background-color:#121212!important;color:#e0e0e0!important;border-color:#333!important}a{color:#81a2be!important}img,video,iframe,svg{filter:none!important}';document.head.appendChild(s);})();"},
-    {"name": "Analyse Website", "description": "Analyzes the current website's technology stack using w3techs.com.", "code": "javascript:(function() {  var currentSite = window.location.hostname;  var redirectUrl = 'https://w3techs.com/sites/info/' + currentSite;  window.location.href = redirectUrl;})();"},
-    {"name": "YT No Sign In", "description": "Redirects YouTube videos to an embed version to bypass sign-in prompts.", "code": "javascript:(function(){window.location.replace(document.URL.replace('watch?v=','v/'))})()"},
-    {"name": "Restore Right-Click", "description": "Re-enables the right-click context menu on sites that block it.", "code": "javascript:void(document.onmousedown='return true');void(document.onmouseup='return true');void(document.oncontextmenu='return true')"}
+    {
+        "name": "Tip (bk-)", 
+        "description": "Shows a popup with various tips for using browsers and bookmarklets.", 
+        "code": "javascript:(function(){const d=document.createElement('div');d.style.cssText='position:fixed;top:2vh;right:2vw;max-width:max(420px,min(98vw,980px));max-height:85vh;overflow-y:auto;padding:clamp(14px,2vw,22px) clamp(20px,3vw,32px);background:rgba(8,8,18,0.97);color:#f5f5fc;box-shadow:0 16px 64px rgba(0,0,0,0.75);border-radius:18px;font:400 clamp(13px,0.95vw,14.5px)/1.5 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;z-index:99999999;pointer-events:auto;user-select:text;border:1px solid #35355c;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);opacity:0;transform:translateY(-20px);transition:all .5s ease-out';d.innerHTML=`<div style=\"position:relative;\"><button id=\"closeBtn\" style=\"position:absolute;top:0;right:0;background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;padding:8px 12px;line-height:1;\">✕</button><div style=\"font-weight:700;font-size:clamp(16px,1.3vw,18px);margin-bottom:12px;color:#60a8ff;letter-spacing:-0.3px;padding-right:36px;\">🚀 Browser & Bookmarklet Tips (2026)</div></div><label style=\"display:flex;align-items:center;gap:10px;font-size:clamp(12.5px,0.9vw,13.5px);color:#e0e0f5;cursor:pointer;user-select:none;margin-bottom:12px;\"><input type=\"checkbox\" id=\"keep\" style=\"margin:0;transform:scale(1.2);\">Keep open</label><strong>① Focus Address bar:</strong><br>• Ctrl+L (universal) | Cmd+L (macOS)<br>• Alt+D (Windows/Edge) | F6 / Fn+F6 (cycle)<br>• Why? → to search for bookmarklet inside current tab<br><br><strong>② Search bookmarks (inside current tab), type in Address bar:</strong><br>• <strong>@b+[Tab]</strong> (quick) or <strong>@bookmarks</strong> - (Chrome)<br>• <strong>*</strong> - (Firefox)<br><br><strong>③ Organize and name bookmarklets (here are given different names, just choose one):</strong><br>1. Group all bookmarklet inside a Folder: \"Bookmarklets\" / \"JS Tools\" / \"⚡\"<br>2. Add a Prefix to every bookmarklet name: (bk-name) or (js-...) or (⚡-...) or (bkt-)<br>3. Type: bk / js / ⚡ + {folder name} / {bookmarklet name}<br>→ filter only bookmarklet<br><br><small id=\"timer\" style=\"opacity:0.85;color:#c0c0e0;display:block;margin:10px 0 8px;\">Auto-hide in 18s • Esc to close</small><div style=\"margin-top:12px;font-size:13.5px;line-height:1.5;\"><strong>More keyboard shortcuts for Chrome</strong><br><a href=\"https://support.google.com/chrome/answer/157179?sjid=3834341088639364232-EU\" style=\"color:#88ccff;text-decoration:underline;\" target=\"_blank\">Chrome keyboard shortcuts (Google Support)</a><br><a href=\"https://www.dca.ca.gov/about_us/kbs_chrome.shtml\" style=\"color:#88ccff;text-decoration:underline;\" target=\"_blank\">Chrome Keyboard Shortcuts (dca.ca.gov)</a></div>`;document.body.appendChild(d);let seconds=18;const timerEl=d.querySelector('#timer');const updateTimer=()=>{if(seconds>0){seconds--;timerEl.textContent=`Auto-hide in ${seconds}s • Esc to close`}};let tId=setInterval(()=>{updateTimer();if(seconds<=0){clearInterval(tId);d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=>d.remove(),700)}},1000);updateTimer();setTimeout(()=>{d.style.opacity='1';d.style.transform='translateY(0)'},80);d.querySelector('#closeBtn').onclick=()=>{d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=>d.remove(),700)};const c=d.querySelector('#keep');if(c){c.addEventListener('change',()=>{if(c.checked){clearInterval(tId);timerEl.textContent='Auto-hide paused • Esc or close button'}else{seconds=18;updateTimer();tId=setInterval(()=>{updateTimer();if(seconds<=0){clearInterval(tId);d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=>d.remove(),700)}},1000)}})}document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!e.repeat){d.style.opacity='0';d.style.transform='translateY(-20px)';setTimeout(()=>d.remove(),700)}},{once:true})})();"
+    },
+    {
+        "name": "Translate to UN Language (bk-)", 
+        "description": "Translates the current page into one of the 6 official UN languages.", 
+        "code": "javascript:(function(){const d=document.createElement('div');const langs={ar:'Arabic',zh:'Chinese',en:'English',fr:'French',ru:'Russian',es:'Spanish'};const translate=code=>{window.open('https://translate.google.com/translate?sl=auto&tl='+code+'&u='+encodeURIComponent(location.href),'_blank');d.remove();document.removeEventListener('keydown',k)};d.innerHTML='<div style=\"position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:sans-serif;padding:20px;overflow:auto\"><div style=\"background:white;padding:30px;border-radius:12px;box-shadow:0 4px 30px rgba(0,0,0,0.5);position:relative;max-width:500px;width:100%;max-height:100%;overflow:auto\"><button id=\"tClose\" style=\"position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:#dc3545;color:white;border-radius:50%;cursor:pointer;font-size:20px;line-height:1;padding:0\">×</button><h2 style=\"margin:0 0 20px;color:#333;font-size:22px;padding-right:40px\">🌐 Translate Page</h2><div style=\"margin-bottom:20px\"><input id=\"tInput\" type=\"text\" placeholder=\"Type language name or code...\" style=\"width:100%;padding:12px 15px;border:2px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;outline:none\" autocomplete=\"off\"><div id=\"tSuggestions\" style=\"margin-top:8px;max-height:200px;overflow-y:auto;border:1px solid #e0e0e0;border-radius:6px;display:none\"></div></div><div style=\"display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px\"><button class=\"tBtn\" data-lang=\"en\" title=\"English\" style=\"padding:14px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500\">English</button><button class=\"tBtn\" data-lang=\"fr\" title=\"French\" style=\"padding:14px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500\">Français</button><button class=\"tBtn\" data-lang=\"ar\" title=\"Arabic\" style=\"padding:14px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500\">العربية</button><button class=\"tBtn\" data-lang=\"ru\" title=\"Russian\" style=\"padding:14px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500\">Русский</button><button class=\"tBtn\" data-lang=\"es\" title=\"Spanish\" style=\"padding:14px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500\">Español</button><button class=\"tBtn\" data-lang=\"zh\" title=\"Chinese\" style=\"padding:14px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500\">中文</button></div><p style=\"margin:0;color:#666;font-size:12px;text-align:center\">Press <kbd style=\"padding:2px 6px;background:#f4f4f4;border:1px solid #ccc;border-radius:3px;font-family:monospace\">ESC</kbd> to close</p></div></div>';document.body.appendChild(d);const input=d.querySelector('#tInput');const suggestions=d.querySelector('#tSuggestions');const close=()=>{d.remove();document.removeEventListener('keydown',k)};d.querySelector('#tClose').onclick=close;const k=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',k);d.querySelectorAll('.tBtn').forEach(b=>{b.onmouseover=()=>b.style.background='#3367d6';b.onmouseout=()=>b.style.background='#4285f4';b.onclick=()=>translate(b.dataset.lang)});input.oninput=()=>{const v=input.value.toLowerCase().trim();if(!v){suggestions.style.display='none';return}const m=Object.entries(langs).filter(([c,n])=>c.includes(v)||n.toLowerCase().includes(v));if(m.length){suggestions.innerHTML=m.map(([c,n])=>'<div class=\"tSug\" data-code=\"'+c+'\" style=\"padding:10px 15px;cursor:pointer;border-bottom:1px solid #f0f0f0\"><strong>'+n+'</strong> <span style=\"color:#888;font-size:12px\">('+c+')</span></div>').join('');suggestions.style.display='block';suggestions.querySelectorAll('.tSug').forEach(s=>s.onclick=()=>translate(s.dataset.code))}else suggestions.style.display='none'};input.focus()})();"
+    },
+    {
+        "name": "Interactive QR Code (bk-)", 
+        "description": "Generates an interactive QR code for the current page URL.", 
+        "code": "javascript:(function(){const d=document.createElement('div');let size='1000x1000';const urlData=encodeURIComponent(location.href);const base=(fmt)=>'https://api.qrserver.com/v1/create-qr-code/?size='+size+'&data='+urlData+'&ecc=H&margin=4&color=0-0-0&bgcolor=255-255-255&format='+fmt;d.innerHTML='<div style=\"position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999999;display:flex;align-items:center;justify-content:center;padding:12px;font-family:sans-serif\"><div style=\"background:#fff;padding:16px;border-radius:10px;max-width:480px;width:100%;text-align:center;position:relative\"><button id=\"qrClose\" style=\"position:absolute;top:8px;right:8px;width:28px;height:28px;border:none;background:#dc3545;color:#fff;border-radius:50%;font-size:18px;cursor:pointer\">×</button><h2 style=\"margin:0 0 6px;font-size:18px\">🔲 QR Code</h2><p style=\"margin:0 0 10px;font-size:11px;color:#666;word-break:break-all\">'+location.href+'</p><img id=\"qrImg\" src=\"'+base('png')+'\" style=\"display:block;margin:0 auto 10px;max-width:90vw;max-height:65vh;aspect-ratio:1/1;object-fit:contain;border:1px solid #ddd;border-radius:8px\"><div style=\"margin:6px 0 10px;font-size:12px;color:#555\">Size: <input id=\"qrSize\" value=\"1000x1000\" placeholder=\"1000x1000\" style=\"width:96px;padding:4px 6px;font-size:12px;border:1px solid #ccc;border-radius:4px;text-align:center\"> px</div><div style=\"display:flex;gap:10px;margin-bottom:8px\"><button id=\"btnPng\" style=\"flex:1;padding:10px;background:#007bff;color:#fff;border:none;border-radius:6px;font-weight:bold\">PNG</button><button id=\"btnSvg\" style=\"flex:1;padding:10px;background:#6c757d;color:#fff;border:none;border-radius:6px\">SVG</button></div><p style=\"margin:0;font-size:10px;color:#999\">ESC to close • Right-click to save</p></div></div>';document.body.appendChild(d);const img=d.querySelector('#qrImg'),btnPng=d.querySelector('#btnPng'),btnSvg=d.querySelector('#btnSvg'),inp=d.querySelector('#qrSize');const refresh=(fmt)=>img.src=base(fmt);inp.onchange=()=>{if(/^\\d+x\\d+$/i.test(inp.value.trim())){size=inp.value.trim();refresh(btnSvg.style.fontWeight==='bold'?'svg':'png')}};const close=()=>{d.remove();document.removeEventListener('keydown',k)};d.querySelector('#qrClose').onclick=close;const k=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',k);btnPng.onclick=()=>{refresh('png');btnPng.style.background='#007bff';btnPng.style.fontWeight='bold';btnSvg.style.background='#6c757d';btnSvg.style.fontWeight='normal'};btnSvg.onclick=()=>{refresh('svg');btnSvg.style.background='#007bff';btnSvg.style.fontWeight='bold';btnPng.style.background='#6c757d';btnPng.style.fontWeight='normal'};})();"
+    },
+    {
+        "name": "Search Web Archive (bk-)", 
+        "description": "Search for the current URL in the Wayback Machine.", 
+        "code": "javascript:(function(){window.location='http://web.archive.org/web/*/'+document.URL})();"
+    },
+    {
+        "name": "Save to Web Archive (bk-)", 
+        "description": "Save the current page to the Wayback Machine.", 
+        "code": "javascript:(function(){window.open('https://web.archive.org/save/'+document.URL,'_blank')})();"
+    },
+    {
+        "name": "Clear Cache and... (bk-)", 
+        "description": "Clears local storage, session storage, cookies, cache, and IndexedDB.", 
+        "code": "javascript:(function(){try{localStorage.clear();sessionStorage.clear();document.cookie.split(';').forEach(c=>document.cookie=c.split('=')[0]+'=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/');if('caches'in window)caches.keys().then(k=>k.forEach(n=>caches.delete(n)));if('indexedDB'in window)indexedDB.databases().then(dbs=>dbs.forEach(db=>indexedDB.deleteDatabase(db.name)));alert('✓ All storage cleared!')}catch(e){alert('Error: '+e.message)}})();"
+    },
+    {
+        "name": "Color Picker (bk-)", 
+        "description": "An advanced color picker tool with multiple features using EyeDropper API.", 
+        "code": "javascript:(function(){if(!('EyeDropper'in window)){alert('EyeDropper API not supported in this browser');return;}const d=document.createElement('div');d.innerHTML='<div style=\"position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:sans-serif\"><div style=\"background:#fff;color:#333;padding:16px 20px;border-radius:10px;max-width:360px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.4);position:relative\"><button id=\"cpClose\" style=\"position:absolute;top:8px;right:8px;width:26px;height:26px;border:none;border-radius:50%;background:#dc3545;color:#fff;font-size:16px;cursor:pointer\">×</button><h2 style=\"margin:0 0 10px;font-size:18px;\">🎨 Color Picker</h2><p style=\"margin:0 0 8px;font-size:13px;\">Click \"Pick color\" then click anywhere on the page.</p><button id=\"cpPick\" style=\"display:inline-block;margin:6px 0 10px;padding:8px 12px;border:none;border-radius:6px;background:#007bff;color:#fff;font-weight:600;cursor:pointer\">Pick color</button><div id=\"cpResult\" style=\"display:none;margin-top:10px;font-size:13px;\"><div id=\"cpSwatch\" style=\"width:64px;height:32px;border-radius:6px;border:1px solid #ccc;margin-bottom:6px;\"></div><div><strong>HEX:</strong> <span id=\"cpHex\"></span></div><div><strong>RGB:</strong> <span id=\"cpRgb\"></span></div><button id=\"cpCopy\" style=\"margin-top:8px;padding:6px 10px;border:none;border-radius:4px;background:#28a745;color:#fff;cursor:pointer;font-size:12px;\">Copy HEX</button></div><p style=\"margin:8px 0 0;font-size:11px;color:#666;\">Esc to close.</p></div></div>';document.body.appendChild(d);const close=()=>{d.remove();document.removeEventListener('keydown',onKey)};const onKey=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',onKey);d.querySelector('#cpClose').onclick=close;const btnPick=d.querySelector('#cpPick');const res=d.querySelector('#cpResult');const sw=d.querySelector('#cpSwatch');const hexSpan=d.querySelector('#cpHex');const rgbSpan=d.querySelector('#cpRgb');const btnCopy=d.querySelector('#cpCopy');btnPick.onclick=async()=>{try{const ed=new EyeDropper();const {sRGBHex}=await ed.open();hexSpan.textContent=sRGBHex;rgbSpan.textContent='';sw.style.background=sRGBHex;res.style.display='block';}catch(e){console.error(e);}};btnCopy.onclick=async()=>{try{await navigator.clipboard.writeText(hexSpan.textContent);alert('HEX copied: '+hexSpan.textContent);}catch(e){alert('Could not copy to clipboard');}}})();"
+    }
 ];
 
+// === RENDU ===
 function renderBookmarklets(filter = '') {
     const container = document.getElementById('bookmarkletsContainer');
     const noResultsMessage = document.getElementById('noResultsMessage');
     container.innerHTML = '';
     
     const lowerCaseFilter = filter.toLowerCase();
-    const filteredData = bookmarkletsData.filter(bm => bm.name.toLowerCase().includes(lowerCaseFilter) || bm.description.toLowerCase().includes(lowerCaseFilter));
+    const filteredData = bookmarkletsData.filter(bm => 
+        bm.name.toLowerCase().includes(lowerCaseFilter) || 
+        bm.description.toLowerCase().includes(lowerCaseFilter)
+    );
 
     if (filteredData.length === 0) {
         noResultsMessage.style.display = 'block';
@@ -186,6 +214,10 @@ function renderBookmarklets(filter = '') {
         dragLink.className = 'bookmarklet';
         dragLink.href = bm.code;
         dragLink.textContent = bm.name;
+        dragLink.onclick = (e) => {
+            e.preventDefault();
+            alert('Drag this link to your bookmarks bar, or copy the code below!');
+        };
         
         const tooltip = document.createElement('span');
         tooltip.className = 'tooltiptext';
@@ -211,8 +243,24 @@ function renderBookmarklets(filter = '') {
         copyBtn.textContent = 'Copy';
         copyBtn.onclick = () => {
             codeInput.select();
-            document.execCommand('copy');
-            alert('Copied!');
+            // navigator.clipboard nécessite HTTPS ou localhost [web:14]
+            navigator.clipboard.writeText(bm.code).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                // Fallback execCommand pour anciens navigateurs [web:8][web:10]
+                try {
+                    document.execCommand('copy');
+                    alert('Copied!');
+                } catch (e) {
+                    alert('Copy failed');
+                }
+            });
         };
         
         codeContainer.appendChild(codeInput);
@@ -231,8 +279,11 @@ function searchBookmarklets() {
     renderBookmarklets(input.value);
 }
 
-// Initial render
-renderBookmarklets();
+// Attendre que le DOM soit chargé pour éviter les problèmes de null
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('searchInput').addEventListener('keyup', searchBookmarklets);
+    renderBookmarklets();
+});
 </script>
 
 </body>
