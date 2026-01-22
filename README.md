@@ -1,3 +1,5 @@
+# how about a bookmarklet that let you copy prompt into clipboard, (either have a website that have all prompt or use one prompt per bookmarklet)
+
 # Personal Bookmarklets Collection
 
 A curated collection of **bookmarklets** that I find useful.  
