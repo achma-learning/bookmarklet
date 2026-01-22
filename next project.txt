@@ -1,9 +1,0 @@
-// Make page editable (design mode)
-// Remove all images (faster loading)
-// Highlight search terms
-// Auto-scroll page
-
-// Extract all emails from page
-// Extract all phone numbers
-// Copy all image URLs
-// Download all images
