@@ -68,7 +68,7 @@ Example:
 
 ---
 
-## 5. Example Bookmarklet: Browser & Bookmarklet Tips (2026)
+## 5. Example Bookmarklet: Browser & Bookmarklet Tips
 
 This bookmarklet creates a floating overlay with **tips for using and organizing bookmarklets**.
 
