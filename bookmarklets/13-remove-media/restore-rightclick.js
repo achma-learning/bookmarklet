@@ -1,1 +1,1 @@
-javascript:void(document.onmousedown='return true');void(document.onmouseup='return true');void(document.oncontextmenu='return true')
+javascript:(function(){document.onmousedown=function(){return true};document.onmouseup=function(){return true};document.oncontextmenu=function(){return true}})();
