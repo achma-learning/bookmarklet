@@ -1,0 +1,1 @@
+javascript:(function(){window.open('https://mail.google.com/mail/?ui=2&view=cm&fs=1&tf=1&shva=1%27,%27Compose%20Gmail%27,%27status=no,directories=no,location=no,resizable=no,menubar=no,width=600,height=600,toolbar=no%27);})();

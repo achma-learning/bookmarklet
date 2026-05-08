@@ -1,0 +1,1 @@
+javascript:(function() { var style = document.createElement('style'); style.innerHTML = ` * { color: white !important; background-color: #111000%20!important;%20}%20%60;%20document.head.appendChild(style);})();

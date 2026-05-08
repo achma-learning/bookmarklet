@@ -1,0 +1,1 @@
+javascript:(function(){var s=document.getElementById('bookmarklet-dark-mode');if(s){s.remove();return;}s=document.createElement('style');s.id='bookmarklet-dark-mode';s.innerHTML='*{background-color:#111!important;color:#eee!important;border-color:#333!important}img,video,iframe{opacity:.9}';document.head.appendChild(s);})();

@@ -1,0 +1,7 @@
+javascript:(function(){const refs=[
+  ['u-Sir/peek-pop: A lightweight, open-source browser extension lets you preview, search, and save pages to read later.', 'https://github.com/u-Sir/peek-pop?tab=readme-ov-file'],
+  ['Wayback Machine APIs | Internet Archive', 'https://archive.org/help/wayback_api.php'],
+  ['pdf2learn account access keys', 'https://archive.org/details/@rinika290/web-archive'],
+  ['Internet Archive: Digital Library of Free & Borrowable Texts, Movies, Music & Wayback Machine', 'https://archive.org/details/@rinika290/uploads'],
+  ['s-ecn-collection-pdfs : Free Download, Borrow, and Streaming : Internet Archive', 'https://archive.org/details/s-ecn-collection-pdfs']
+];const w=window.open('','_blank','width=720,height=640');w.document.write('<title>References - archive</title><style>body{font:14px system-ui;padding:20px;background:#111;color:#eee}a{color:#7cf;display:block;margin:8px 0;word-break:break-all}</style><h2>References — archive</h2>'+refs.map(r=>'<a href="'+r[1]+'" target=_blank>'+r[0]+'</a>').join(''));})();

@@ -1,0 +1,1 @@
+javascript:(function(){document.querySelectorAll('img,picture,svg,video,iframe[src*="youtube"],iframe[src*="vimeo"]').forEach(el=>el.remove());document.querySelectorAll('*').forEach(el=>{el.style.backgroundImage='none'});alert('%E2%9C%93 Removed all images, videos, and background images!')})();

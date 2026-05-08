@@ -1,0 +1,1 @@
+javascript:(function(){document.designMode=document.designMode==='on'?%27off%27:%27on%27;alert(document.designMode===%27on%27?%27%E2%9C%93%20Page%20is%20now%20EDITABLE!\n\nClick%20anywhere%20and%20start%20typing.%27:%27%E2%9C%97%20Edit%20mode%20DISABLED%27)})();
