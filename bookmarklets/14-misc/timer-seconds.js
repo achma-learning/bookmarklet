@@ -1,0 +1,1 @@
+javascript:(function() { var timer = prompt("Enter the duration in seconds:"); if (timer && !isNaN(timer)) { setTimeout(function() { alert("Timer finished!"); }, timer * 1000); } else { alert("Invalid input!"); } })();
