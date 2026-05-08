@@ -1,0 +1,128 @@
+A bookmarklet (a portmanteau of bookmark and applet) is a tiny program stored as a browser bookmark that runs a snippet of JavaScript on the current page when you click it. Instead of pointing to a regular URL like https://example.com, the bookmark’s address starts with javascript: followed by executable code. Google Chrome, like most browsers, treats this as an instruction to run that code in the context of the open tab.
+
+Because the code executes in the page’s own environment, a bookmarklet can read, modify, or extract anything on that page. Common uses:
+
+Tweak the page’s appearance (hide sidebars, switch to dark mode, enlarge text).
+
+Extract structured data (grabbing all links, scraping product prices, copying a formatted citation).
+
+Automate a multi-click flow (fill a form, check all checkboxes).
+
+Open the current page in another tool (archive.is, Wayback Machine, translation services).
+
+Debug or inspect (show cookies, outline all elements, view password fields).
+
+The essence: one line of JavaScript
+Bookmarklets are almost always delivered as a single line of code. The javascript: URL format does not allow line breaks naturally (a newline would break the URL). In practice, you write a normal multi-line function, then minify it into one compact line. The standard structure is an immediately-invoked function expression (IIFE) so that variables don’t leak into the page’s global scope:
+
+javascript
+javascript:(function(){ /* your code here */ })();
+Everything goes in one line, no line breaks, minimal whitespace.
+
+Guidelines to build a bookmarklet using AI and vibecoding
+Vibecoding means you iterate quickly—write a rough idea, test it live, tweak it with the help of AI, and converge on a working solution without deep architectural planning. Below is a concrete workflow for creating a bookmarklet that mixes AI assistance and hands‑on experimentation.
+
+1. Define what the bookmarklet should do
+Start with a one‑sentence goal.
+Example: “Change the background colour of any page to a soft pastel shade and show the hex code in the corner.”
+
+2. Write or generate the JavaScript logic using AI
+Open your favourite AI assistant (ChatGPT, Claude, Gemini, etc.) and prompt it to write the core logic as a regular script. You can test this in the browser’s Console (F12 → Console).
+
+Sample prompt (vibe‑coding style):
+
+“Write a JavaScript snippet that changes the body’s background to a random warm pastel colour and displays the hex code in a small fixed box at the bottom right. Keep it self‑contained. No external libraries. Use modern JS.”
+
+The AI might give you something like:
+
+javascript
+function randomPastel() {
+  const h = Math.floor(Math.random() * 360);
+  return `hsl(${h}, 60%, 80%)`;
+}
+const color = randomPastel();
+document.body.style.backgroundColor = color;
+const div = document.createElement('div');
+div.textContent = color;
+div.style.cssText = 'position:fixed;bottom:10px;right:10px;background:#fff;padding:4px 8px;font-family:monospace;z-index:99999;border-radius:4px;box-shadow:0 0 4px rgba(0,0,0,.3);';
+document.body.appendChild(div);
+setTimeout(() => div.remove(), 5000);
+3. Wrap in an IIFE and minify to a single line
+Now ask the AI to convert that script into a bookmarklet‑ready form:
+
+Prompt:
+
+“Convert this script into a bookmarklet: wrap it in (function(){ ... })();, remove all comments, collapse it to a single line without any line breaks, and make sure no semicolons are missing. Output just the javascript: URL. Also use void(0); at the end to prevent the browser from navigating.”
+
+Example AI output:
+
+text
+javascript:(function(){const r=Math.floor(360*Math.random());const c=`hsl(${r},60%,80%)`;document.body.style.backgroundColor=c;const d=document.createElement('div');d.textContent=c;d.style.cssText='position:fixed;bottom:10px;right:10px;background:#fff;padding:4px 8px;font-family:monospace;z-index:99999;border-radius:4px;box-shadow:0 0 4px rgba(0,0,0,.3)';document.body.appendChild(d);setTimeout(()=>d.remove(),5000);})();void(0);
+Why void(0)? The browser evaluates the javascript: URL and, if the code returns a string, it would replace the current page with that string. void(0) (or wrapping everything in a function that returns undefined) prevents that.
+
+4. Test it instantly in the console before bookmarking
+Before you save it as a bookmark, paste the inner JavaScript (the part inside javascript:, without the prefix) into the Console and hit Enter. Does it work? Does it break any existing page scripts? Debug there. This is pure vibecoding: change a variable, re‑run, ask AI for fixes.
+
+5. Handle special characters (URL‑encode if necessary)
+If your code contains characters that are reserved in URLs—like #, %, ", spaces—they must be percent‑encoded. However, you can avoid most of that by:
+
+Using single quotes for strings instead of double quotes (keeps the bookmark’s HTML href attribute simpler).
+
+Avoiding raw # and % inside strings; you can use \x23 for # and \x25 for % if needed.
+
+In Chrome, you can simply copy/paste the one‑line code into the URL field of a new bookmark; the browser will handle encoding automatically. The safest way is to add a bookmark manually with the javascript: URL as the address.
+
+Still, if you’re generating the HTML link yourself, use encodeURIComponent on the code after the javascript: scheme.
+
+6. Save as a bookmark in Chrome
+Right‑click the bookmarks bar and choose “Add page…” (or press Ctrl+D).
+
+Name: Give it a short, descriptive name, e.g., Pastel BG.
+
+URL: Paste the entire single line starting with javascript:.
+
+Click Save.
+Now click it once on any tab—the magic runs.
+
+7. Iterate with vibe‑coding
+Vibecoding is all about quick cycles. If the bookmarklet isn’t quite right, go back to the AI:
+
+“The box disappears too quickly, make it stay for 10 seconds and add a ‘Copy’ button that copies the hex code to clipboard.”
+
+The AI will update the code; you minify again, test, save, re‑test. This loop can take under a minute once you’re fluent.
+
+Pro tips for robust bookmarklets
+Don’t use document.write – it can wipe the page if called after load.
+
+Check that elements exist before manipulating them, especially on pages that load content dynamically.
+
+Use z-index: 2147483647 (maximum safe integer) if you must overlay something on top of everything.
+
+Avoid polluting the global scope – the IIFE pattern handles this.
+
+Don’t request sensitive permissions (bookmarklets run in the page context, not as extensions).
+
+Minify manually or with tools – you can use any JavaScript minifier (UglifyJS, Terser, or online tools like Bookmarklet Cruncher) but AI does just as well.
+
+If your bookmarklet grows large, consider converting it into a userscript (Tampermonkey) or a browser extension; bookmarklets have length limits (Chrome’s URL limit is ~2 MB, but some sites may truncate).
+
+Example: from idea to finished bookmarklet using AI
+Goal: Extract all image URLs from a page and open them in new tabs.
+
+Prompt: “Write a JavaScript snippet that finds all <img> elements, collects their src attributes, and opens each in a new tab. Wrap as a bookmarklet with (function(){...})(); and output a single line.”
+
+AI output (after refinement):
+
+javascript
+javascript:(function(){var imgs=document.querySelectorAll('img');imgs.forEach(function(img){if(img.src) window.open(img.src,'_blank');});})();void(0);
+Test in Console: var imgs=document.querySelectorAll('img'); imgs.forEach(function(img){if(img.src) window.open(img.src,'_blank');}); (Chrome might block multiple pop‑ups, so adjust to show a list or use a single window).
+
+Tweak prompt: “Instead of opening all tabs at once (which gets blocked), show a modal list of URLs with a ‘Open selected’ button.”
+
+AI refactors, you minify again, and the cycle continues.
+
+Safety & awareness
+Because bookmarklets run with the full privileges of the current page, they can read anything you can see—cookies, form inputs, tokens. Only use bookmarklets you trust or have written (or understood) yourself. AI‑generated code should be inspected before use, as it might contain errors or unintended side‑effects.
+
+Now you’re ready to vibe out your own bookmarklets. Open the Console, prompt your AI, minify, test, bookmark, and enjoy a browser that bends to your will with a single click.
+
