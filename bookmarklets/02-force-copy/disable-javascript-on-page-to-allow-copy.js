@@ -1,1 +1,1 @@
-javascript:void(d=document);if(frames.length){alert('Script%20doesn/'t%20work%20in%20frames');}else{while((el=d.getElementsByTagName('script')).length){el[0].parentNode.removeChild(el[0]);};onerror=function(){};d.close();}
+javascript:(function(){var d=document;if(frames.length){alert('Script%20does%20not%20work%20in%20frames');return}var el;while((el=d.getElementsByTagName('script')).length){el[0].parentNode.removeChild(el[0])}onerror=function(){};d.close()})();

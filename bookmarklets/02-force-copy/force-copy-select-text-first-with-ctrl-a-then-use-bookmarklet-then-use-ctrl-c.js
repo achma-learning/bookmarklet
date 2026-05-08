@@ -1,1 +1,1 @@
-javascript: (function () {  const forceEnableCopyPaste = (e) => {    e.stopImmediatePropagation();    return true;  };  ['paste', 'copy'].forEach(event => {    document.addEventListener(event, forceEnableCopyPaste, true);  });})();
+javascript:(function(){var forceEnableCopyPaste=function(e){e.stopImmediatePropagation();return true};['paste','copy'].forEach(function(event){document.addEventListener(event,forceEnableCopyPaste,true)})})();

@@ -1,1 +1,1 @@
-javascript:forceBrowserDefault=(e=>{e.stopImmediatePropagation();return true;});['copy','cut','paste'].forEach(e=>document.addEventListener(e,forceBrowserDefault,true));
+javascript:(function(){var forceBrowserDefault=function(e){e.stopImmediatePropagation();return true};['copy','cut','paste'].forEach(function(e){document.addEventListener(e,forceBrowserDefault,true)})})();
